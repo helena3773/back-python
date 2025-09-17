@@ -1,8 +1,11 @@
+import os
+
 from flask import request
 from flask_restful import Resource
 import cv2
 import numpy as np
 from google.cloud import vision
+from google.oauth2 import service_account
 import re
 from PIL import Image
 import logging
@@ -11,6 +14,18 @@ import logging
 scale_factor = 2
 # 이미지 전처리 및 자르기
 section_ratio = (0.0, 0.1, 0.7, 0.5)
+
+GOOGLE_APPLICATION_CREDENTIALS_PATH = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+
+def get_vision_client():
+    if GOOGLE_APPLICATION_CREDENTIALS_PATH and os.path.exists(GOOGLE_APPLICATION_CREDENTIALS_PATH):
+        credentials = service_account.Credentials.from_service_account_file(GOOGLE_APPLICATION_CREDENTIALS_PATH)
+        print("경로 찾음")
+        client = vision.ImageAnnotatorClient(credentials=credentials)
+    else:
+        print("경로 못찾음")
+        client = vision.ImageAnnotatorClient()
+    return client
 
 class inOcr(Resource):
     def post(self):
@@ -73,7 +88,7 @@ def make_scan_image(image, section_ratio, scale_factor):
 
 
 def detect_text(image):
-    client = vision.ImageAnnotatorClient()
+    client = get_vision_client()
     # OpenCV 이미지를 임시 파일로 저장
     cv2.imwrite('temp.png', image)
     with open('temp.png', "rb") as image_file:

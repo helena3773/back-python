@@ -1,4 +1,7 @@
-import os
+import os, sys
+sys.path.append(os.path.dirname(__file__))
+import chromedriver_autoinstaller
+chromedriver_autoinstaller.install()
 
 from selenium import webdriver
 from selenium.common import NoSuchElementException, TimeoutException
@@ -104,16 +107,16 @@ def get_recipe(driver, recipes, category_text):
             recipe_image = driver.find_element(By.XPATH,'//*[@id="main_thumbs"]').get_attribute('src')
             print(f'이미지 링크 : {recipe_image}')
             # DB에 해당 레시피가 존재하는지 확인 후, 존재하면 레시피 순서 업데이트, 존재하지 않으면 신규 등록
-            select_query = "SELECT COUNT(*) FROM Recipe WHERE recipeCode = :recipeCode"
+            select_query = "SELECT COUNT(*) FROM recipe WHERE recipeCode = %(recipeCode)s"
             select_result = query_select(connection, query=select_query, recipeCode=recipeCode)
             if select_result[0][0] == 0:
                 recipe_url = f"https://www.10000recipe.com/recipe/{recipeCode}"
-                insert_query = "INSERT INTO Recipe(recipeCode, recipe_url, recipe_title, recipe_img, recipe_seq) VALUES (:recipeCode, :recipe_url, :recipe_title, :recipe_img, :recipe_seq)"
+                insert_query = "INSERT INTO recipe(recipeCode, recipe_url, recipe_title, recipe_img, recipe_seq) VALUES (%(recipeCode)s, %(recipe_url)s, %(recipe_title)s, %(recipe_img)s, %(recipe_seq)s)"
                 query_insert(connection, query=insert_query, recipeCode=recipeCode, recipe_url=recipe_url,
                              recipe_title=recipe_title_value, recipe_img=recipe_image, recipe_seq=recipe_seq_str)
             else:
                 print("해당 레시피는 DB에 이미 존재하며, 레시피 순서를 보충하기 위해 업데이트 합니다.")
-                update_query = "UPDATE Recipe SET recipe_seq = :recipe_seq WHERE recipeCode = :recipeCode"
+                update_query = "UPDATE recipe SET recipe_seq = %(recipe_seq)s WHERE recipeCode = %(recipeCode)s"
                 query_insert(connection, query=update_query, recipeCode=recipeCode, recipe_seq=recipe_seq_str)
                 print("업데이트 완료")
         except TimeoutException:
@@ -139,10 +142,10 @@ def recipe_info(connection,driver, wait, current_tab, recipeCode):
         print(f'재료명 :{ingredient} - 투입량 : {jaro_span.text}')
 
 
-        select_query = "SELECT COUNT(*) FROM Recipe_ingredients WHERE ingredient = :ingredient and recipeCode = :recipeCode"
+        select_query = "SELECT COUNT(*) FROM recipe_ingredients WHERE ingredient = %(ingredient)s and recipeCode = %(recipeCode)s"
         select_result = query_select(connection, query=select_query, ingredient=ingredient, recipeCode=recipeCode)
         if select_result[0][0] == 0:
-            insert_query = "INSERT INTO Recipe_ingredients(ingredient, recipeCode, RI_amount) VALUES (:ingredient, :recipeCode, :RI_amount)"
+            insert_query = "INSERT INTO recipe_ingredients(ingredient, recipeCode, RI_amount) VALUES (%(ingredient)s, %(recipeCode)s, %(RI_amount)s)"
             query_insert(connection, query=insert_query, ingredient=ingredient, recipeCode=recipeCode,
                       RI_amount=jaro_span.text)
         else:
