@@ -4,6 +4,9 @@ from flask import jsonify
 from flask_restful import Resource
 from flask import request
 import openai
+from dotenv import load_dotenv
+
+load_dotenv()
 
 #환경 변수에서 OpenAI API 키를 가져옴
 client = OpenAI(

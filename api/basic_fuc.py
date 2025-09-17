@@ -1,9 +1,9 @@
 
-from db_connection import connect_to_oracle
+from db_connection import connect_to_db
 
 def db_conn():
     # 오라클 데이터베이스에 연결
-    connection = connect_to_oracle()
+    connection = connect_to_db()
     return connection
     print("데이터베이스에 연결했습니다.")
 

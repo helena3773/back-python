@@ -6,6 +6,9 @@ from flask_restful import Resource
 from flask import request
 import boto3
 from botocore.exceptions import NoCredentialsError
+from dotenv import load_dotenv
+
+load_dotenv()
 
 client = OpenAI(
     api_key=os.environ.get("OPENAI_API_KEY"),
@@ -16,6 +19,7 @@ s3 = boto3.client('s3',
                   aws_access_key_id='',
                   aws_secret_access_key='',
                   region_name='ap-northeast-2')
+
 
 def upload_to_s3(local_file, bucket, s3_file):
     try:
@@ -29,6 +33,7 @@ def upload_to_s3(local_file, bucket, s3_file):
         print("Credentials not available")
         return False
 
+
 class CreateImage(Resource):
     def post(self):
         prompt = request.json['message']  # 뷰에서 넘긴 메세지 받기
@@ -36,14 +41,17 @@ class CreateImage(Resource):
         image_path, image_name = generate_image(prompt, client, id)
         return jsonify({"image_url": image_path, "image_name": image_name})
 
+
 # 폴더 생성 함수
 def create_folder_if_not_exists(folder_path):
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
+
 def create_image(client, model, messages):
     response = client.chat.completions.create(model=model, messages=messages)
     return response
+
 
 def generate_image(prompt, client, id):
     model = 'gpt-3.5-turbo'
@@ -87,4 +95,3 @@ def generate_image(prompt, client, id):
         return s3_url, image_name
     else:
         return None, None
-

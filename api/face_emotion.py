@@ -1,4 +1,5 @@
 import warnings
+
 warnings.filterwarnings('ignore')
 import numpy as np
 import cv2
@@ -10,6 +11,7 @@ import os
 
 # 모델 로드
 model = load_model('./face.h5')
+
 
 class FaceEmotion(Resource):
     def post(self):
@@ -39,6 +41,7 @@ class FaceEmotion(Resource):
         # 결과 출력
         emotions = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']
         return {'emotion': emotions[result]}
+
     def detect_face(self, frame):
         shape_x = 48
         shape_y = 48
@@ -56,6 +59,7 @@ class FaceEmotion(Resource):
                 sub_img = frame[y:y + h, x:x + w]
                 coord.append([x, y, w, h])
         return gray, detected_faces, coord
+
     def extract_face_features(self, gray, detected_faces, coord, offset_coefficients=(0.075, 0.05)):
         shape_x = 48
         shape_y = 48
