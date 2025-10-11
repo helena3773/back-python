@@ -14,7 +14,7 @@ pipeline {
 
     environment {
         // 컨테이너 이미지 이름(레지스트리 경로 제외)
-        IMAGE_NAME = 'healthy-real/flask-backend'
+        IMAGE_NAME = 'jyy1108u/flask-backend'
         // Docker Hub를 사용한다면 빈 문자열을 유지하고,
         // 프라이빗 레지스트리를 쓴다면 예: 'registry.my-company.com'
         DOCKER_REGISTRY_HOST = ''
