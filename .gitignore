@@ -27,5 +27,9 @@ static/pose/
 *.h5
 *.onnx
 
+!best.pt
+!face.h5
+!pose.pt
+
 # OS files
 .DS_Store

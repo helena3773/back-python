@@ -23,6 +23,9 @@ static/pose/
 *.pt
 *.h5
 *.onnx
+!best.pt
+!face.h5
+!pose.pt
 temp.png
 .git
 .gitignore
