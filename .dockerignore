@@ -9,6 +9,8 @@ __pycache__/
 *.db
 .DS_Store
 .env
+secret/
+secret/**
 node_modules/
 api/node_modules/
 runs/

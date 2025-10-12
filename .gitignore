@@ -1,0 +1,31 @@
+# Python caches
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+.venv/
+
+# Local secrets and credentials
+.env
+secret/
+secret/**/*.json
+
+# IDE/editor config
+.idea/
+.vscode/
+
+# Model artifacts and media caches
+runs/
+static/upload_image/
+static/food_image/
+static/ocr/
+static/foodocr/
+static/foodOCR/
+static/pose/
+*.pt
+*.h5
+*.onnx
+
+# OS files
+.DS_Store
