@@ -1,12 +1,22 @@
+import os
 import MySQLdb
 
 def connect_to_db():
     # 데이터베이스 연결 설정
+    user = os.getenv("DB_USER")
+    password = os.getenv("DB_PASSWORD")
+    host = os.getenv("DB_HOST", "localhost")
+    database = os.getenv("DB_NAME", "healthyreal")
+    port = int(os.getenv("DB_PORT", "3306"))
+
     connection = MySQLdb.connect(
-        user="admin",
-        passwd="XPk84uzWCsQIuI2bdYrB",
-        host="localhost",
-        db="healthyreal"
+        user=user,
+        passwd=password,
+        host=host,
+        db=database,
+        port=port,
+        charset="utf8mb4",
+        use_unicode=True,
     )
 
 
