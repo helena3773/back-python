@@ -10,10 +10,13 @@ __pycache__/
 .env
 secret/
 secret/**/*.json
+secret/google
 
 # IDE/editor config
 .idea/
 .vscode/
+
+
 
 # Model artifacts and media caches
 runs/
