@@ -6,7 +6,7 @@ import cv2
 from scipy.ndimage import zoom
 from flask_restful import Resource, reqparse
 from werkzeug.datastructures import FileStorage
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 import os
 
 # 모델 로드
