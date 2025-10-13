@@ -19,7 +19,9 @@ RUN apt-get update \
         libgl1 \
         libglib2.0-0 \
         pkg-config \
-        openjdk-21-jre-headless \
+        openjdk-21-jre-headless \ 
+        chromium \
+        chromium-driver \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt ./
