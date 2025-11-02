@@ -1,7 +1,8 @@
 import os, sys
+import shutil
+
 sys.path.append(os.path.dirname(__file__))
 import chromedriver_autoinstaller
-chromedriver_autoinstaller.install()
 
 from selenium import webdriver
 from selenium.common import NoSuchElementException, TimeoutException
@@ -21,13 +22,31 @@ class recipeCrawlingAPI(Resource):
         basic_setting(urllink)
         return "크롤링 작업이 성공적으로 실행되었습니다."
 
-#크롤링할 url 설정 함수
+def _resolve_chromedriver_path():
+    """chromedriver 실행 파일 경로를 반환합니다."""
+
+    try:
+        # chromedriver_autoinstaller는 설치 후 설치 경로를 반환합니다.
+        return chromedriver_autoinstaller.install()
+    except Exception:
+         # 서버 환경에서 Chrome이 설치되지 않아 자동 설치가 실패할 수 있습니다.
+        driver_path = shutil.which("chromedriver")
+        if driver_path:
+            return driver_path
+        raise RuntimeError(
+            "chromedriver를 찾을 수 없습니다. 이미지 빌드시 chromium/chromedriver 패키지가 "
+            "설치되어 있는지 확인해주세요."
+           )
+
 def basic_setting(urllink):
     # 1.WebDriver객체 생성
-    driver_path = f'{os.path.join(os.path.dirname(__file__), "chromedriver.exe")}'
+    driver_path = _resolve_chromedriver_path()
     # 웹드라이버를 위한 Service객체 생성
     service = Service(executable_path=driver_path)
     options = webdriver.ChromeOptions()
+    options.binary_location = os.getenv("CHROME_BINARY", "/usr/bin/chromium")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--headless")  # headless 모드 설정
     # 자동종료 막기
     options.add_experimental_option("detach", True)

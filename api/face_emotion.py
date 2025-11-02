@@ -6,11 +6,14 @@ import cv2
 from scipy.ndimage import zoom
 from flask_restful import Resource, reqparse
 from werkzeug.datastructures import FileStorage
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 import os
 
 # 모델 로드
-model = load_model('./face.h5')
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, 'face.h5')
+
+model = load_model(MODEL_PATH)
 
 
 class FaceEmotion(Resource):

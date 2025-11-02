@@ -1,4 +1,5 @@
-from flask import Flask
+import os
+from flask import Flask, Response
 from flask_restful import Api
 from flask_cors import CORS
 from api.create_image import CreateImage
@@ -23,12 +24,36 @@ from api.ttest import ttest
 from api.summary_api import summaryAPI
 from api.PoseDetector import PoseDetector
 
+from flask_swagger import swagger
+from flask_swagger_ui import get_swaggerui_blueprint
 
-#플라스크 앱 생성
+# 플라스크 앱 생성
 app = Flask(__name__)
-#CORS에러 처리
+
+SWAGGER_URL = '/api/docs'
+API_URL = '/api/spec'
+
+swagger_ui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': "My App",
+        "version": 1.0
+    }
+)
+
+app.register_blueprint(blueprint=swagger_ui_blueprint, url_prefix=SWAGGER_URL)
+
+# CORS에러 처리
 CORS(app, resources={r"/*": {"origins": "*"}})
 api = Api(app)
+
+
+@app.route("/api/spec")
+def serve_openapi_yaml():
+    with open(os.environ.get("SWAGGER_YAML_PATH"), "r", encoding="utf-8") as f:
+        return Response(f.read(), mimetype="application/yaml")
+
 
 api.add_resource(CreateImage, '/CreateIm')
 api.add_resource(areaCrawling, '/areaCrawling')
@@ -52,9 +77,8 @@ api.add_resource(recommendMate, '/recommendMate')
 api.add_resource(ttest, '/ttest')
 api.add_resource(summaryAPI, '/summaryAPI')
 api.add_resource(PoseDetector, '/PoseDetector')
-api.decorators=[CORS()]
+api.decorators = [CORS()]
 
 if __name__ == '__main__':
     # app.run(debug=True)
     app.run(host='0.0.0.0', port=5000)
-
